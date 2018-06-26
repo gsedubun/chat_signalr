@@ -1,0 +1,70 @@
+@{
+    ViewData["Title"] = "Chat";
+}
+
+<h2>Chat</h2>
+<div class="container">
+    <form id="send-form" action="#">
+        <div class="form-group">
+            <label>Send a message:</label>
+            <div class="input-group">
+                <input type="text" id="message-textbox" class="form-control" />
+                <div class="input-group-btn">
+                    <input type="submit" value="send" id="send-button" class="btn btn-primary" />
+                </div>
+            </div>
+            
+        </div>
+
+        <ul id="messages-list"></ul>
+
+    </form>
+</div>
+@section Scripts{
+    <script src="/lib/signalr/signalr.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            var sendForm = document.getElementById("send-form");
+            var sendButton = document.getElementById("send-button");
+            var messagesList = document.getElementById("messages-list");
+            var messageTextBox = document.getElementById("message-textbox");
+
+            function appendMessage(content) {
+                var li = document.createElement("li");
+             
+                var bold = document.createElement("b");
+                bold.className='bold';
+                bold.innerText=content;
+                li.innerHTML=bold.outerHTML;
+                li.textContent = bold.innerHTML;
+
+                messagesList.appendChild(li);
+            }
+
+            var connection = new signalR.HubConnectionBuilder()
+                .withUrl("/hubs/chat")
+                .build();
+
+            sendForm.addEventListener("submit", function (e) {
+                var message = messageTextBox.value;
+                messageTextBox.value = "";
+                connection.send("Send", message);
+                e.preventDefault();
+                //alert("sent");
+            });
+
+            connection.on("SendMessage", function (sender, message) {
+                appendMessage(sender + ' : ' + message);
+            });
+
+            connection.on("SendAction", function (sender, action) {
+                appendMessage(sender + ' ' + action);
+            });
+            connection.start().then(function () {
+                messageTextBox.disabled = false;
+                sendButton.disabled = false;
+            });
+        });
+    </script>
+}

@@ -1,0 +1,33 @@
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container">
+    <form asp-controller="Account" asp-route-returnurl="@ViewData["ReturnUrl"]" asp-action="Login" method="POST">
+        <div class="panel panel-default col-md-6">
+            <div class="panel-heading">
+
+                <label>Login</label>
+
+            </div>
+
+<div class="panel-body">
+            <label>Email:</label>
+
+            <input type="text" name="Email" class="form-control" />
+
+            <label>Password</label>
+            <input type="password" name="Password"  class="form-control" />
+
+                    <input type="submit" value="Login" id="send-button" class="btn btn-primary" />
+
+            <div class="input-group">
+                <div class="input-group-btn">
+                </div>
+            </div>
+            </div>
+        </div>
+
+
+    </form>
+</div>
